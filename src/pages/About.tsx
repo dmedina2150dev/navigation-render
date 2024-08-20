@@ -1,8 +1,8 @@
-import { useContext, useState } from 'react'
-import { NavigatorContext } from '../components/Router'
+import { useContext, useState, memo } from 'react';
+import { NavigatorContext } from '../components/Router';
 
 
-export const About = () => {
+const About = memo(function About () {
   const { navBackward } = useContext(NavigatorContext);
   const [counter, setCounter] = useState(0);
 
@@ -17,4 +17,6 @@ export const About = () => {
       <button onClick={navBackward}>Volver</button>
     </>
   )
-}
+});
+
+export default About;

@@ -1,7 +1,9 @@
-import { useContext } from "react";
+import { useContext, memo } from "react";
 import { NavigatorContext } from "../components/Router";
 
-export const Home = () => {
+
+const Home = memo(
+function Home () {
   const { navForward } = useContext(NavigatorContext);
 
   return (
@@ -11,4 +13,6 @@ export const Home = () => {
       <button onClick={() => navForward('about')}>Ir a About</button>
     </>
   );
-};
+});
+
+export default Home;

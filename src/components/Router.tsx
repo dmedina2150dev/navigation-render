@@ -1,6 +1,15 @@
-import { FC, Children, useState, createContext, useCallback, useMemo } from 'react'
+import {
+  FC,
+  Children,
+  useState,
+  createContext,
+  useCallback,
+  useMemo,
+  useRef,
+  memo,
+} from "react";
 
-const COMPONENT_UTIL = 'Route';
+const COMPONENT_UTIL = "Route";
 
 interface Props {
   children: Array<React.ReactElement<any>>;
@@ -9,41 +18,58 @@ interface Props {
 interface NavigatorContext {
   navForward: (page: string) => void;
   navBackward: () => void;
+  currentPage: string;
 }
 
 export const NavigatorContext = createContext({} as NavigatorContext);
 
+interface PropPage {
+  currentRoutes: any[];
+  currentPage: string;
+}
+
+const Page = memo(function Page ({ currentRoutes, currentPage }: PropPage) {
+  return currentRoutes.find(
+    ({ name }) => name === currentPage
+  ).Component;
+})
+
 export const Router: FC<Props> = ({ children }) => {
-  const [currentPage, setCurrentPage] = useState('main');
+  const [currentPage, setCurrentPage] = useState("main");
 
   const routesFromChildren = Children.map(children, ({ props, type }) => {
     const { name } = type as any;
-    const isRoute = name === COMPONENT_UTIL;  
-    console.log({ props, type });
+    const isRoute = name === COMPONENT_UTIL;
     return isRoute ? props : null;
   });
 
-  console.log(routesFromChildren)
+  const currentRoutes = useRef(routesFromChildren);
 
-  const Page = routesFromChildren.find(({ name }) => name === currentPage).Component;
+  console.log(routesFromChildren);
 
-  const navForward = useCallback((page: string) => {
-    setCurrentPage(page);
-  }, [setCurrentPage]);
-  
+  const navForward = useCallback(
+    (page: string) => {
+      setCurrentPage(page);
+    },
+    [setCurrentPage]
+  );
+
   const navBackward = useCallback(() => {
-    setCurrentPage('main');
+    setCurrentPage("main");
   }, [setCurrentPage]);
 
-
-  const value = useMemo(() => ({
-    navForward,
-    navBackward
-  }), [])
+  const value = useMemo(
+    () => ({
+      navForward,
+      navBackward,
+      currentPage,
+    }),
+    [navForward, navBackward, currentPage]
+  );
 
   return (
     <NavigatorContext.Provider value={value}>
-      { Page && Page }
+      <Page currentPage={currentPage} currentRoutes={currentRoutes.current} />
     </NavigatorContext.Provider>
-  )
-}
+  );
+};
