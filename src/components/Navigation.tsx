@@ -13,7 +13,7 @@ interface NavigatorContext {
 
 export const NavigatorContext = createContext({} as NavigatorContext);
 
-export const Router: FC<Props> = ({ children }) => {
+export const Navigation: FC<Props> = ({ children }) => {
   const [currentPage, setCurrentPage] = useState('main');
   const [componentCache, setComponentCache] = useState<Record<string, React.LazyExoticComponent<any>>>({});
 
